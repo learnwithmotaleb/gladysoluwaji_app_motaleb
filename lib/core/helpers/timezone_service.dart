@@ -15,6 +15,8 @@ class TimezoneService {
   static Future<void> _handleTimezoneCheck() async {
     log("========== TIMEZONE CHECK START ==========");
 
+    if (AppStorage.token.isEmpty) return;
+
     log("➡️ Creating ProfileController");
     final profileController = Get.put(ProfileController());
 

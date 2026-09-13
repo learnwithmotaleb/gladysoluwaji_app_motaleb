@@ -18,6 +18,7 @@ class SplashController extends GetxController {
     await Future.delayed(const Duration(seconds: 1));
 
     if (!AppStorage.isLoggedIn) {
+      AppStorage.clearAuth();
       Get.toNamed(Routes.loginScreen);
       return;
     }
