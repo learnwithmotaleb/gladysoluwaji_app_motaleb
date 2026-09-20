@@ -26,19 +26,44 @@ class CreateDoctorProfileScreenMobile
 
                     Space.height.v20,
 
-                    CustomDropDownWidget(
-                      hint: "Select Specialty",
-                      items: controller.allSpecialist
-                          .map((e) => e.name)
-                          .toList(),
-                      onChanged: (value) {
-                        final specialist = controller.allSpecialist.firstWhere(
-                          (e) => e.name == value,
+                    Obx(() {
+                      if (controller.isLoading.value) {
+                        return CustomDropDownWidget(
+                          hint: "Loading specialties...",
+                          items: const [],
+                          onChanged: (_) {},
                         );
+                      }
 
-                        controller.specialityId.value = specialist.id;
-                      },
-                    ),
+                      if (controller.hasError.value) {
+                        return CustomDropDownWidget(
+                          hint: "Unable to load specialties",
+                          items: const [],
+                          onChanged: (_) {},
+                        );
+                      }
+
+                      if (controller.allSpecialist.isEmpty) {
+                        return CustomDropDownWidget(
+                          hint: "No specialties available",
+                          items: const [],
+                          onChanged: (_) {},
+                        );
+                      }
+
+                      return CustomDropDownWidget(
+                        hint: "Select Specialty",
+                        items: controller.allSpecialist
+                            .map((e) => e.name)
+                            .toList(),
+                        onChanged: (value) {
+                          final specialist = controller.allSpecialist
+                              .firstWhere((e) => e.name == value);
+
+                          controller.specialityId.value = specialist.id;
+                        },
+                      );
+                    }),
 
                     Space.height.betweenInputBox,
 

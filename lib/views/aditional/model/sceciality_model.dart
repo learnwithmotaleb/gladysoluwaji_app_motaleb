@@ -13,16 +13,18 @@ class SpecialistsModel {
     required this.meta,
   });
 
-  factory SpecialistsModel.fromJson(Map<String, dynamic> json) =>
-      SpecialistsModel(
-        success: json["success"],
-        statusCode: json["statusCode"],
-        message: json["message"],
-        data: List<Specialis>.from(
-          json["data"].map((x) => Specialis.fromJson(x)),
-        ),
-        meta: Meta.fromJson(json["meta"]),
-      );
+  factory SpecialistsModel.fromJson(Map<String, dynamic> json) {
+    return SpecialistsModel(
+      success: json["success"] == true,
+      statusCode: json["statusCode"] ?? 0,
+      message: json["message"]?.toString() ?? '',
+      data: (json["data"] as List<dynamic>? ?? [])
+          .whereType<Map<String, dynamic>>()
+          .map((x) => Specialis.fromJson(x))
+          .toList(),
+      meta: Meta.fromJson(json["meta"] as Map<String, dynamic>? ?? {}),
+    );
+  }
 }
 
 class Specialis {
@@ -31,8 +33,8 @@ class Specialis {
   final String description;
   final String thumbnail;
   final bool isActive;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
   final int v;
 
   Specialis({
@@ -41,21 +43,23 @@ class Specialis {
     required this.description,
     required this.thumbnail,
     required this.isActive,
-    required this.createdAt,
-    required this.updatedAt,
+    this.createdAt,
+    this.updatedAt,
     required this.v,
   });
 
-  factory Specialis.fromJson(Map<String, dynamic> json) => Specialis(
-    id: json["_id"],
-    name: json["name"] ?? '',
-    description: json["description"],
-    thumbnail: json["thumbnail"] ?? '',
-    isActive: json["isActive"],
-    createdAt: DateTime.parse(json["createdAt"]),
-    updatedAt: DateTime.parse(json["updatedAt"]),
-    v: json["__v"],
-  );
+  factory Specialis.fromJson(Map<String, dynamic> json) {
+    return Specialis(
+      id: json["_id"]?.toString() ?? '',
+      name: json["name"]?.toString() ?? '',
+      description: json["description"]?.toString() ?? '',
+      thumbnail: json["thumbnail"]?.toString() ?? '',
+      isActive: json["isActive"] == true,
+      createdAt: DateTime.tryParse(json["createdAt"]?.toString() ?? ''),
+      updatedAt: DateTime.tryParse(json["updatedAt"]?.toString() ?? ''),
+      v: json["__v"] ?? 0,
+    );
+  }
 
   Map<String, dynamic> toJson() => {
     "_id": id,
@@ -63,8 +67,8 @@ class Specialis {
     "description": description,
     "thumbnail": thumbnail,
     "isActive": isActive,
-    "createdAt": createdAt.toIso8601String(),
-    "updatedAt": updatedAt.toIso8601String(),
+    "createdAt": createdAt?.toIso8601String(),
+    "updatedAt": updatedAt?.toIso8601String(),
     "__v": v,
   };
 }
@@ -82,12 +86,14 @@ class Meta {
     required this.totalPages,
   });
 
-  factory Meta.fromJson(Map<String, dynamic> json) => Meta(
-    total: json["total"],
-    page: json["page"],
-    limit: json["limit"],
-    totalPages: json["totalPages"],
-  );
+  factory Meta.fromJson(Map<String, dynamic> json) {
+    return Meta(
+      total: json["total"] ?? 0,
+      page: json["page"] ?? 1,
+      limit: json["limit"] ?? 10,
+      totalPages: json["totalPages"] ?? 1,
+    );
+  }
 
   Map<String, dynamic> toJson() => {
     "total": total,

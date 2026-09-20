@@ -37,17 +37,33 @@ class CreateDoctorProfileController extends GetxController {
     fetchSpecialist();
   }
 
+  RxBool hasError = false.obs;
+
   Future<SpecialistsModel> fetchSpecialist() async {
-    return ApiRequest().get(
-      fromJson: SpecialistsModel.fromJson,
-      endPoint: ApiEndPoints.getSpecialties,
-      isLoading: isLoading,
-      onSuccess: (result) {
-        final seen = <String>{};
-        final unique = result.data.where((e) => seen.add(e.name)).toList();
-        allSpecialist.assignAll(unique);
-      },
-    );
+    hasError.value = false;
+
+    try {
+      return await ApiRequest().get(
+        fromJson: SpecialistsModel.fromJson,
+        endPoint: ApiEndPoints.getSpecialties,
+        isLoading: isLoading,
+        showResponse: true,
+        onSuccess: (result) {
+          final seen = <String>{};
+
+          final unique = result.data.where((e) => seen.add(e.name)).toList();
+
+          allSpecialist.assignAll(unique);
+
+          hasError.value = false;
+        },
+      );
+    } catch (e) {
+      hasError.value = true;
+      allSpecialist.clear();
+
+      rethrow;
+    }
   }
 
   Future<void> pickDate(BuildContext context) async {

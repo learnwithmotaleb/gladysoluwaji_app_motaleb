@@ -31,6 +31,8 @@ class ProfileScreenMobile extends GetView<ProfileController> {
                       if (AppStorage.isUser == 'DOCTOR') DoctorProfileBox(),
 
                       Space.height.v40,
+
+                      //
                       Column(
                         children: List.generate(
                           5,
